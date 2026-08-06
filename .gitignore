@@ -1,0 +1,14 @@
+# never commit secrets or local state
+.env
+*.env
+!.env.example
+
+# build output — lives on the registry, not in source
+dist/
+build/
+*.egg-info/
+node_modules/
+
+# language noise
+__pycache__/
+*.pyc
