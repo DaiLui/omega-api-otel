@@ -45,6 +45,23 @@ decision = judge_and_emit(input=user_msg, output=agent_reply, session_id="conv-4
 `emit_decision` performs no network I/O and needs no API key — it maps a decision you already have.
 `judge_and_emit` reuses `omega-api` for the HTTP call, then emits.
 
+## Reading agents together (Hive)
+
+A Hive draws the relation of two agents **only** from a shared token in `turn_id`, set **before** the run.
+Timing can only suggest an association; it never certifies one. Without the token each agent is still judged normally.
+
+```
+turn_id = {agent}_{run_token}_{nnn}
+agent      your label · [a-z0-9-]
+run_token  10 lowercase hex · one per PAIR of agents, per run · new run = new token
+nnn        3 digits shared by both agents for the same exchange (agents counting on their own: s001 · declared, not aligned · no relation graph)
+```
+
+Rules: one `session_id` per agent for the whole token (a restart needs a new token) · three agents on one token are not certified ·
+a re-used `turn_id` for a different turn returns `409 TURN_CONFLICT` and the turn is **not recorded**. Full rules: [omega.dailui.com/integrations.php](https://omega.dailui.com/integrations.php) and your account's Integration page.
+
+`judge_and_emit(..., session_id=..., turn_id=...)` passes `turn_id` through to the Python client; always pass `session_id` for a Hive member.
+
 ## What lands on the event
 
 ```
